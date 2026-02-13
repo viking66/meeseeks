@@ -1,0 +1,20 @@
+set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
+
+default: build
+
+build:
+  cabal build
+
+run *args:
+  cabal run rambutan -- {{args}}
+
+test:
+  cabal test
+
+fix:
+  git ls-files '*.hs' | xargs -n 1 hlint --refactor --refactor-options="--inplace"
+  fourmolu -i src
+  fourmolu -i app
+  fourmolu -i -o -XImportQualifiedPost -o -XOverloadedRecordDot test
+
+fix-build: fix build
