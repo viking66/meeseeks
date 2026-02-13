@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "devDependencies": {
+    "browser-sync": "^3.0.0"
+  }
+}

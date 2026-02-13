@@ -1,0 +1,7 @@
+dist-newstyle/
+.hie/
+result
+.spago/
+output/
+node_modules/
+frontend/dist/

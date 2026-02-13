@@ -1,0 +1,75 @@
+cabal-version:      3.0
+name:               rambutan
+version:            0.1.0.0
+-- synopsis:
+-- description:
+license:            NONE
+author:             Jason Davidson
+maintainer:         jad658@gmail.com
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+common warnings
+  ghc-options:
+    -fwrite-ide-info
+    -hiedir=.hie/
+    -Wall
+    -Wcompat
+    -Werror
+    -Wincomplete-uni-patterns
+    -Wincomplete-record-updates
+    -Wmissing-export-lists
+    -Wmissing-home-modules
+    -Wpartial-fields
+    -Wredundant-constraints
+    -Widentities
+    -Wunused-packages
+    -Wno-unticked-promoted-constructors
+    -Werror=incomplete-patterns
+    -Werror=missing-fields
+    -Werror=overlapping-patterns
+
+common extensions
+  default-extensions:
+    DuplicateRecordFields,
+    NoFieldSelectors,
+    OverloadedRecordDot,
+
+library
+    import:           warnings, extensions
+    exposed-modules:
+        Rambutan
+    build-depends:
+        base ^>=4.21.0.0,
+        aeson,
+        servant-server,
+        text,
+        warp,
+    hs-source-dirs:   src
+    default-language: GHC2024
+
+executable rambutan
+    import:           warnings
+    main-is:          Main.hs
+    ghc-options:      -threaded
+    build-depends:
+        base ^>=4.21.0.0,
+        rambutan,
+    hs-source-dirs:   app
+    default-language: GHC2024
+
+test-suite rambutan-test
+    import:           warnings, extensions
+    default-language: GHC2024
+    other-modules:
+        Rambutan.RambutanSpec
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    build-depends:
+        base ^>=4.21.0.0,
+        rambutan,
+        hspec,
+        text,
+    build-tool-depends:
+        hspec-discover:hspec-discover

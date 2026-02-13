@@ -1,0 +1,60 @@
+set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
+
+default: build
+
+# Build everything
+build: build-backend build-frontend
+
+# Backend commands
+build-backend:
+  cd backend && cabal build
+
+run-backend *args:
+  cabal run --project-dir=backend rambutan -- {{args}}
+
+fix-backend:
+  git ls-files 'backend/*.hs' | xargs -n 1 hlint --refactor --refactor-options="--inplace"
+  fourmolu -i backend/src
+  fourmolu -i backend/app
+  fourmolu -i -o -XImportQualifiedPost -o -XOverloadedRecordDot backend/test
+
+test-backend:
+  cd backend && cabal test
+
+# Frontend commands
+build-frontend:
+  mkdir -p frontend/dist
+  just build-frontend-purs
+  just build-frontend-js
+  cp frontend/index.html frontend/dist/
+
+build-frontend-purs:
+  cd frontend && spago build
+
+build-frontend-js:
+  cd frontend && esbuild output/Main/index.js --bundle --outfile=dist/main.js --format=esm
+
+watch-frontend:
+  concurrently \
+    "cd frontend && spago build --watch" \
+    "cd frontend && esbuild output/Main/index.js --bundle --outfile=dist/main.js --format=esm --watch" \
+    "cd frontend && npx browser-sync start --config bs-config.js"
+
+serve-frontend:
+  cd frontend && npx browser-sync start --config bs-config.js
+
+test-frontend:
+  cd frontend && spago test
+
+# Test commands
+test: test-backend test-frontend
+
+# Combined commands
+fix: fix-backend
+
+fix-build: fix build
+
+dev:
+  @echo "Starting dev servers..."
+  @echo "Backend: just run-backend"
+  @echo "Frontend: just watch-frontend"
