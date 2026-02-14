@@ -8,6 +8,12 @@ build:
 run *args:
   cabal run rambutan -- {{args}}
 
+watch:
+  ghciwatch \
+    --command "cabal repl test:rambutan-test" \
+    --watch src --watch app --watch test \
+    --test-ghci Main.main
+
 test:
   cabal test
 

@@ -18,6 +18,12 @@ fix-backend:
   fourmolu -i backend/app
   fourmolu -i -o -XImportQualifiedPost -o -XOverloadedRecordDot backend/test
 
+watch-backend:
+  cd backend && ghciwatch \
+    --command "cabal repl test:rambutan-test" \
+    --watch src --watch app --watch test \
+    --test-ghci Main.main
+
 test-backend:
   cd backend && cabal test
 
